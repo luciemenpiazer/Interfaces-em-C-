@@ -19,7 +19,7 @@ Consolidar a jornada procedural → OO → interfaces e repository, com foco em 
 
 Este sumário serve como índice para as instruções e decisões de cada fase.
 
-* [Fase 00: Aquecimento Conceitual]
+* [Fase 00: Aquecimento](#)
 
 ---
 
