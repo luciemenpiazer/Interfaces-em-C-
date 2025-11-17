@@ -2,50 +2,45 @@ using System;
 
 public class Program
 {
-    // O "Fluxo" - A função procedural centralizada
+    // Função Central (Procedural)
+    // Melhoria: Uso de "Expression Body" (=>) e "Switch Expression"
     public static string GerarMensagemProcedural(string tipoUsuario, string nome)
     {
-        // A decisão é centralizada aqui: o ponto de acoplamento
-        switch (tipoUsuario.ToLower()) 
+        // A decisão continua centralizada aqui (acoplamento), 
+        // mas com sintaxe moderna e segura contra nulos.
+        return (tipoUsuario?.ToLowerInvariant()) switch
         {
-            case "premium":
-                return $"Parabéns, {nome}, seu acesso Premium foi ativado!";
-                
-            case "admin":
-                return $"Olá, Admin {nome}. Pronta para gerenciar o sistema?";
-                
-            case "vip":
-                return $"Seja muito bem-vindo(a), {nome}. Sua experiência VIP começa agora!";
-
-            // Caso Padrão/Default (inclui "padrao", "desconhecido", etc.)
-            default: 
-                return $"Bem-vindo(a), {nome}.";
-        }
+            "premium" => $"Parabéns, {nome}, seu acesso Premium foi ativado!",
+            
+            "admin"   => $"Olá, Admin {nome}. Pronta para gerenciar o sistema?",
+            
+            "vip"     => $"Seja muito bem-vindo(a), {nome}. Sua experiência VIP começa agora!",
+            
+            // O underscore (_) representa o 'default' no switch expression
+            _         => $"Bem-vindo(a), {nome}."
+        };
     }
 
-    // Main para executar e testar a função
     public static void Main(string[] args)
     {
-        Console.WriteLine("--- Testando Função Procedural ---");
+        Console.WriteLine("--- Testando Função Procedural (Fase 01) ---");
 
         // Cenário 1: Premium
-        string msg1 = GerarMensagemProcedural("premium", "Luciemen");
-        Console.WriteLine($"Teste Premium: {msg1}");
+        Console.WriteLine($"[Premium] {GerarMensagemProcedural("premium", "Luciemen")}");
 
         // Cenário 2: Admin (Case Insensitive)
-        string msg2 = GerarMensagemProcedural("AdMiN", "Leticia");
-        Console.WriteLine($"Teste Admin: {msg2}");
+        Console.WriteLine($"[Admin]   {GerarMensagemProcedural("AdMiN", "Leticia")}");
 
         // Cenário 3: VIP
-        string msg3 = GerarMensagemProcedural("vip", "Ana");
-        Console.WriteLine($"Teste VIP: {msg3}");
+        Console.WriteLine($"[VIP]     {GerarMensagemProcedural("vip", "Ana")}");
 
-        // Cenário 4: Padrão (Default)
-        string msg4 = GerarMensagemProcedural("padrao", "Convidado");
-        Console.WriteLine($"Teste Padrão: {msg4}");
+        // Cenário 4: Padrão
+        Console.WriteLine($"[Padrão]  {GerarMensagemProcedural("padrao", "Convidado")}");
 
-        // Cenário 5: Inválido (Default)
-        string msg5 = GerarMensagemProcedural("desconhecido", "Visitante");
-        Console.WriteLine($"Teste Inválido: {msg5}");
+        // Cenário 5: Inválido (Cai no default)
+        Console.WriteLine($"[Inválido]{GerarMensagemProcedural("desconhecido", "Visitante")}");
+        
+        // Cenário 6: Nulo (Teste de Robustez - Novo)
+        Console.WriteLine($"[Null]    {GerarMensagemProcedural(null, "Fantasma")}");
     }
 }
