@@ -20,6 +20,7 @@ Abaixo estão os links para a documentação e para o código-fonte de cada etap
 * [Fase 01: Procedural](#fase-01) | 📂 [Código Fonte](./src/fase-01-procedural/)
 * [Fase 02: OO Sem Interface](#fase-02) | 📂 [Código Fonte](./src/fase-02-oo-sem-interface/)
 * [Fase 03: OO Com Interface](#fase-03) | 📂 [Código Fonte](./src/fase-03-com-interfaces/)
+* [Fase 04: Repository InMemory](#fase-04) | 📂 [Código Fonte](./src/fase-04-repository-inmemory/)
 
 ---
 
@@ -94,3 +95,35 @@ Abaixo, o log de execução comprovando o comportamento polimórfico. Observe qu
 
 ---
 
+---
+
+### <a id="fase-04"></a> 💾 Fase 04: Repository InMemory
+**Foco:** Centralização do acesso a dados usando o padrão **Repository** para desacoplar o domínio da persistência.
+
+#### 💡 Decisões de Design
+* [cite_start]**Padrão Repository:** Criação de um contrato genérico `IRepository<T, TId>` [cite: 507-512]. Isso permite trocar a persistência (Memória → CSV → SQL) sem quebrar a regra de negócio.
+* [cite_start]**Persistência em Memória:** Implementação técnica usando `Dictionary<TId, T>` para simular um banco de dados com acesso rápido O(1) [cite: 513-519].
+* **Camada de Serviço:** Introdução do `UsuarioService` para orquestrar as chamadas. [cite_start]O `Program.cs` (Cliente) conversa com o Service, e o Service conversa com o Repository, garantindo a inversão de dependência [cite: 621-622].
+* [cite_start]**Proteção de Estado:** O método `ListAll()` retorna `IReadOnlyList`, impedindo que consumidores modifiquem a coleção interna do repositório inadvertidamente[cite: 32].
+
+#### ✅ Checklist de Qualidade
+* [x] Contrato `IRepository` não expõe detalhes de implementação (como `List` ou `Dictionary`).
+* [x] Cliente não acessa dados diretamente, apenas via métodos do repositório.
+* [cite_start][x] Testes de unidade cobrem inserção e busca sem depender de disco/IO [cite: 567-568].
+
+#### 📸 Evidências de Testes
+Log de execução mostrando o fluxo completo: Composição (Program) → Serviço → Repositório (Salva) → Serviço → Interface (Notifica).
+
+```text
+=== Fase 04: Repository InMemory ===
+
+--- Cadastrando via Service ---
+[Repository] Usuário 1 salvo em memória.
+[Repository] Usuário 2 salvo em memória.
+
+--- Notificando Usuários ---
+[Premium] Olá PREMIUM Luciemen, confira ofertas exclusivas!
+[Padrão]  Olá João, assine o premium hoje!
+
+Total de usuários ativos: 2
+```
