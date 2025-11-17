@@ -1,13 +1,7 @@
-using System.Collections.Generic;
-
-namespace Fase04.RepositoryInMemory
+namespace Fase04.RepositoryInMemory.Interfaces
 {
-    public interface IRepository<T, TId>
+    public interface IGeradorMensagem
     {
-        T Add(T entity);
-        T? GetById(TId id);
-        IReadOnlyList<T> ListAll();
-        bool Update(T entity);
-        bool Remove(TId id);
+        string Gerar(string nome);
     }
 }
