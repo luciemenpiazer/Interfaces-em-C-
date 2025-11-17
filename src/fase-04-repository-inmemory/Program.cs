@@ -1,42 +1,36 @@
 ﻿using System;
+using Fase04.RepositoryInMemory.Entities;
+using Fase04.RepositoryInMemory.Interfaces;
+using Fase04.RepositoryInMemory.Repositories;
+using Fase04.RepositoryInMemory.Services;
 
 namespace Fase04.RepositoryInMemory
 {
-    // --- Simulação das Classes da Fase Anterior (Interfaces e Lógica) ---
-    public interface IGeradorMensagem { string Gerar(string nome); }
-    public class GeradorPremium : IGeradorMensagem { public string Gerar(string n) => $"Olá PREMIUM {n}, confira ofertas exclusivas!"; }
-    public class GeradorPadrao : IGeradorMensagem { public string Gerar(string n) => $"Olá {n}, assine o premium hoje!"; }
-    
-    public class Notificador 
-    {
-        private readonly IGeradorMensagem _gerador;
-        public Notificador(IGeradorMensagem gerador) => _gerador = gerador;
-        public void Notificar(string nome) => Console.WriteLine(_gerador.Gerar(nome));
-    }
-    // -------------------------------------------------------------------
-
     public static class Program
     {
         public static void Main()
         {
-            Console.WriteLine("=== Fase 5: Repository In-Memory ===\n");
+            Console.WriteLine("=== Fase 5: Repository + Service ===\n");
 
-            // 1. Composição: Instanciar o Repositório e ensinar que o ID é o campo 'Id'
-            // O cliente (Program) não sabe que é um Dictionary, ele só vê IRepository.
-            IRepository<Usuario, int> usuarioRepo = new InMemoryRepository<Usuario, int>(u => u.Id);
+            // 1. COMPOSIÇÃO (Setup)
+            // Instancia o Repositório (Dados)
+            IRepository<Usuario, int> repo = new InMemoryRepository<Usuario, int>(u => u.Id);
+            
+            // Instancia o Service (Regras), injetando o Repositório nele
+            UsuarioService usuarioService = new UsuarioService(repo);
 
-            // 2. Uso: Adicionando dados (Simulando cadastro)
-            Console.WriteLine("Cadastrando usuários...");
-            usuarioRepo.Add(new Usuario(1, "Luciemen", "Premium"));
-            usuarioRepo.Add(new Usuario(2, "João", "Padrao"));
-            usuarioRepo.Add(new Usuario(3, "Maria", "Premium"));
+            // 2. EXECUÇÃO (Uso do Service)
+            Console.WriteLine("--- Cadastrando via Service ---");
+            usuarioService.RegistrarUsuario(1, "Luciemen", "Premium");
+            usuarioService.RegistrarUsuario(2, "João", "Padrao");
+            usuarioService.RegistrarUsuario(3, "Maria", "Premium");
 
-            // 3. Lógica de Negócio: Iterar e aplicar a estratégia correta
-            var usuarios = usuarioRepo.ListAll();
+            // 3. CONSUMO (Iteração)
+            var todos = usuarioService.ListarTodos();
 
-            foreach (var usuario in usuarios)
+            foreach (var usuario in todos)
             {
-                // Lógica da Fase 4: Decide qual "peça" usar baseada no dado do repositório
+                // Lógica de apresentação/notificação (Fase 4)
                 IGeradorMensagem gerador = usuario.TipoAssinatura == "Premium" 
                     ? new GeradorPremium() 
                     : new GeradorPadrao();
@@ -45,10 +39,9 @@ namespace Fase04.RepositoryInMemory
                 notificador.Notificar(usuario.Nome);
             }
 
-            // 4. Testando remoção
-            Console.WriteLine("\nRemovendo usuário 2...");
-            usuarioRepo.Remove(2);
-            Console.WriteLine($"Total de usuários restantes: {usuarioRepo.ListAll().Count}");
+            // 4. REMOÇÃO
+            usuarioService.RemoverUsuario(2);
+            Console.WriteLine($"\nTotal após remoção: {usuarioService.ListarTodos().Count}");
         }
     }
 }
