@@ -1,8 +1,3 @@
-Entendido\! Ajustei o diagrama da estrutura de pastas no `README.md` para refletir exatamente a organização que você definiu, incluindo os arquivos `Geradores.cs` e `IGeradorMensagem.cs`.
-
-Aqui está o conteúdo completo e corrigido para você copiar e colar no arquivo `src/fase-04-repository-inmemory/README.md`:
-
-````markdown
 # Fase 5: Repository Pattern (InMemory)
 
 ## 📋 Sobre esta Fase
