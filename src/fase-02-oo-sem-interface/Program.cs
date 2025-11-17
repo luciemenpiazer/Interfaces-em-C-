@@ -1,46 +1,62 @@
-using System;
+﻿using System;
 
-public class Program
+namespace Fase02_OO_Sem_Interface
 {
-    // Função Central (Procedural)
-    // Melhoria: Uso de "Expression Body" (=>) e "Switch Expression"
-    public static string GerarMensagemProcedural(string tipoUsuario, string nome)
+    // 1. Classe Base Abstrata (Contrato)
+    public abstract class GeradorMensagem
     {
-        // A decisão continua centralizada aqui (acoplamento), 
-        // mas com sintaxe moderna e segura contra nulos.
-        return (tipoUsuario?.ToLowerInvariant()) switch
-        {
-            "premium" => $"Parabéns, {nome}, seu acesso Premium foi ativado!",
-            
-            "admin"   => $"Olá, Admin {nome}. Pronta para gerenciar o sistema?",
-            
-            "vip"     => $"Seja muito bem-vindo(a), {nome}. Sua experiência VIP começa agora!",
-            
-            // O underscore (_) representa o 'default' no switch expression
-            _         => $"Bem-vindo(a), {nome}."
-        };
+        public abstract string Gerar(string nome);
     }
 
-    public static void Main(string[] args)
+    // 2. Classes Concretas (Especializações)
+    public sealed class PremiumGerador : GeradorMensagem
     {
-        Console.WriteLine("--- Testando Função Procedural (Fase 01) ---");
+        public override string Gerar(string nome) 
+            => $"Parabéns, {nome}, seu acesso Premium foi ativado!";
+    }
 
-        // Cenário 1: Premium
-        Console.WriteLine($"[Premium] {GerarMensagemProcedural("premium", "Luciemen")}");
+    public sealed class AdminGerador : GeradorMensagem
+    {
+        public override string Gerar(string nome) 
+            => $"Olá, Admin {nome}. Pronta para gerenciar o sistema?";
+    }
 
-        // Cenário 2: Admin (Case Insensitive)
-        Console.WriteLine($"[Admin]   {GerarMensagemProcedural("AdMiN", "Leticia")}");
+    public sealed class VipGerador : GeradorMensagem
+    {
+        public override string Gerar(string nome) 
+            => $"Seja muito bem-vindo(a), {nome}. Sua experiência VIP começa agora!";
+    }
 
-        // Cenário 3: VIP
-        Console.WriteLine($"[VIP]     {GerarMensagemProcedural("vip", "Ana")}");
+    public sealed class PadraoGerador : GeradorMensagem
+    {
+        public override string Gerar(string nome) 
+            => $"Bem-vindo(a), {nome}.";
+    }
 
-        // Cenário 4: Padrão
-        Console.WriteLine($"[Padrão]  {GerarMensagemProcedural("padrao", "Convidado")}");
+    // 3. Simulação de Uso (O Cliente)
+    public class Program
+    {
+        public static void Main()
+        {
+            Console.WriteLine("--- Testando Orientação a Objetos (Fase 02) ---");
 
-        // Cenário 5: Inválido (Cai no default)
-        Console.WriteLine($"[Inválido]{GerarMensagemProcedural("desconhecido", "Visitante")}");
-        
-        // Cenário 6: Nulo (Teste de Robustez - Novo)
-        Console.WriteLine($"[Null]    {GerarMensagemProcedural(null, "Fantasma")}");
+            GeradorMensagem gerador;
+
+            // Cenário 1: Premium
+            gerador = new PremiumGerador();
+            Console.WriteLine($"[Premium] {gerador.Gerar("Luciemen")}");
+
+            // Cenário 2: Admin
+            gerador = new AdminGerador();
+            Console.WriteLine($"[Admin]   {gerador.Gerar("Leticia")}");
+
+            // Cenário 3: VIP (Nome diferente para variar)
+            gerador = new VipGerador();
+            Console.WriteLine($"[VIP]     {gerador.Gerar("Ana")}");
+
+            // Cenário 4: Padrão (Antigo default)
+            gerador = new PadraoGerador();
+            Console.WriteLine($"[Padrão]  {gerador.Gerar("Visitante")}");
+        }
     }
 }
