@@ -72,7 +72,7 @@ Abaixo, o log de execução comprovando o comportamento polimórfico. Observe qu
 
 ---
 
-### <a id="fase-03"></a> 🔌 Fase 03: Interfaces e DI
+### <a id="fase-03"></a> 🔌 Fase 03: OO Com interface
 **Foco:** Desacoplamento total usando Contratos (`interface`) e Injeção de Dependência.
 
 #### 💡 Decisões de Design
